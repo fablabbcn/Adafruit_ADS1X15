@@ -25,6 +25,8 @@
 
 #include <Wire.h>
 
+extern TwoWire Wire;
+
 /*=========================================================================
     I2C ADDRESS/BITS
     -----------------------------------------------------------------------*/
@@ -143,14 +145,15 @@ typedef enum {
 class Adafruit_ADS1015 {
 protected:
   // Instance-specific properties
+  TwoWire *_wire; 	     ///< the I2C interface
   uint8_t m_i2cAddress;      ///< the I2C address
   uint8_t m_conversionDelay; ///< conversion deay
   uint8_t m_bitShift;        ///< bit shift amount
   adsGain_t m_gain;          ///< ADC gain
 
 public:
-  Adafruit_ADS1015(uint8_t i2cAddress = ADS1015_ADDRESS);
-  void begin(void);
+  Adafruit_ADS1015(TwoWire *theWire = &Wire);
+  void begin(uint8_t i2cAddress);
   uint16_t readADC_SingleEnded(uint8_t channel);
   int16_t readADC_Differential_0_1(void);
   int16_t readADC_Differential_2_3(void);
@@ -169,7 +172,7 @@ private:
 /**************************************************************************/
 class Adafruit_ADS1115 : public Adafruit_ADS1015 {
 public:
-  Adafruit_ADS1115(uint8_t i2cAddress = ADS1015_ADDRESS);
+  Adafruit_ADS1115(TwoWire *theWire = &Wire);
 
 private:
 };

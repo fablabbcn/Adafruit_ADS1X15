@@ -33,8 +33,6 @@
 #include "WProgram.h"
 #endif
 
-#include <Wire.h>
-
 #include "Adafruit_ADS1015.h"
 
 /**************************************************************************/
@@ -109,8 +107,8 @@ static uint16_t readRegister(uint8_t i2cAddress, uint8_t reg) {
     @param i2cAddress I2C address of device
 */
 /**************************************************************************/
-Adafruit_ADS1015::Adafruit_ADS1015(uint8_t i2cAddress) {
-  m_i2cAddress = i2cAddress;
+Adafruit_ADS1015::Adafruit_ADS1015(TwoWire *theWire) {
+  _wire = theWire;
   m_conversionDelay = ADS1015_CONVERSIONDELAY;
   m_bitShift = 4;
   m_gain = GAIN_TWOTHIRDS; /* +/- 6.144V range (limited to VDD +0.3V max!) */
@@ -120,11 +118,11 @@ Adafruit_ADS1015::Adafruit_ADS1015(uint8_t i2cAddress) {
 /*!
     @brief  Instantiates a new ADS1115 class w/appropriate properties
 
-    @param i2cAddress I2C address of device
+    @param  Wire object
 */
 /**************************************************************************/
-Adafruit_ADS1115::Adafruit_ADS1115(uint8_t i2cAddress) {
-  m_i2cAddress = i2cAddress;
+Adafruit_ADS1115::Adafruit_ADS1115(TwoWire *theWire) {
+  _wire = theWire;
   m_conversionDelay = ADS1115_CONVERSIONDELAY;
   m_bitShift = 0;
   m_gain = GAIN_TWOTHIRDS; /* +/- 6.144V range (limited to VDD +0.3V max!) */
@@ -133,9 +131,14 @@ Adafruit_ADS1115::Adafruit_ADS1115(uint8_t i2cAddress) {
 /**************************************************************************/
 /*!
     @brief  Sets up the HW (reads coefficients values, etc.)
+
+    @param i2cAddress I2C address of device
 */
 /**************************************************************************/
-void Adafruit_ADS1015::begin() { Wire.begin(); }
+void Adafruit_ADS1015::begin(uint8_t i2cAddress) {
+  m_i2cAddress = i2cAddress;
+  Wire.begin(); 
+}
 
 /**************************************************************************/
 /*!
